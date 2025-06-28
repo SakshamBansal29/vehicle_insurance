@@ -1,3 +1,4 @@
 logs/
 vi_mlops
 artifact/
+.env

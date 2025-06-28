@@ -27,6 +27,7 @@ class ProjData:
                 collection = self.mongo_client.client[database_name][collection_name]
 
             print("Start fetching data from Mongo DB")
+            print("Collections: -- ", collection)
             df = pd.DataFrame(list(collection.find()))
             print(f"data fetched having {df.shape[0]} records")
             if "id" in df.columns.to_list():
