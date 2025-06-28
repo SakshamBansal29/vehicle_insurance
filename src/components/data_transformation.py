@@ -33,9 +33,9 @@ class DataTransformation:
         except Exception as e:
             raise MyException(e, sys)
         
-    def get_trandformer_object(self) -> Pipeline:
+    def get_transformer_object(self) -> Pipeline:
 
-        logging("Entering get_tranformer_object method of DataTransformation class")
+        logging.info("Entering get_tranformer_object method of DataTransformation class")
 
         try:
             numeric_transformer = StandardScaler()
@@ -54,7 +54,7 @@ class DataTransformation:
                 remainder='passthrough'
             )
 
-            final_pipeline = Pipeline(steps=["Preprocessor", processor])
+            final_pipeline = Pipeline(steps=[("Preprocessor", processor)])
             logging.info("Final Pipeline Ready!!")
             logging.info("Exited get_data_transformer_object method of DataTransformation class")
             return final_pipeline
@@ -127,13 +127,13 @@ class DataTransformation:
             logging.info("Custom transformations applied to train and test data")
 
             logging.info("Starting Data Transformation")
-            processor = self.get_trandformer_object()
+            preprocessor = self.get_transformer_object()
             logging.info("Got the preprocessor object")
 
             logging.info("Initializing transformation for Training-data")
-            input_feature_train_arr = processor.fit_transform(input_feature_train_df)
+            input_feature_train_arr = preprocessor.fit_transform(input_feature_train_df)
             logging.info("Initializing transformation for Testing-data")
-            input_feature_test_arr = processor.fit_transform(input_feature_test_df) 
+            input_feature_test_arr = preprocessor.fit_transform(input_feature_test_df) 
             logging.info("Transformation done end to end to train-test df.")
 
             logging.info("Applying SMOTEENN for handling imbalanced dataset.")
@@ -150,17 +150,19 @@ class DataTransformation:
             test_arr = np.c_[input_feature_test_final, np.array(target_feature_test_final)]
             logging.info("feature-target concatenation done for train-test df.")            
 
-            save_object(self.data_transformation_config.transformed_object_file_path, processor)
+            save_object(self.data_transformation_config.transformed_object_file_path, preprocessor)
             save_numpy_array_data(self.data_transformation_config.transformed_train_file_path, array=train_arr)
             save_numpy_array_data(self.data_transformation_config.transformed_test_file_path, array=test_arr)
             logging.info("Saving transformation object and transformed files.")
 
             logging.info("Data transformation completed successfully")
-            return DataTransformationArtifact(
+            data_transformation_artifact = DataTransformationArtifact(
                 transformed_object_file_path=self.data_transformation_config.transformed_object_file_path,
-                transformed_train_file_path=self.data_transformation_config.transformed_train_file_path,
-                transformed_test_file_path=self.data_transformation_config.transformed_test_file_path
+                tranformed_train_data_file_path=self.data_transformation_config.transformed_train_file_path,
+                tranformed_test_data_file_path=self.data_transformation_config.transformed_test_file_path
             )
+            print(data_transformation_artifact)
+            return data_transformation_artifact
 
         except Exception as e:
             raise MyException(e, sys) from e

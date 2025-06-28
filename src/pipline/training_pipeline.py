@@ -14,6 +14,10 @@ from src.components.data_transformation import DataTransformation
 from src.entity.config_entity import DataTransformationConfig                                         
 from src.entity.artifact_entity import DataTransformationArtifact
 
+from src.components.model_trainer import ModelTrainer
+from src.entity.config_entity import ModelTrainingConfig                                         
+from src.entity.artifact_entity import ModelTrainigArtifact
+
 
 
 class TrainPipeline:
@@ -21,6 +25,7 @@ class TrainPipeline:
         self.data_ingestion_config = DataIngestionConfig()
         self.data_validation_config = DataValidationConfig()
         self.data_transformation_config = DataTransformationConfig()
+        self.model_training_config = ModelTrainingConfig()
 
     
     def start_data_ingestion(self) -> DataIngestionArtifact:
@@ -65,7 +70,18 @@ class TrainPipeline:
             return data_transformation_artifact
         except Exception as e:
             raise MyException(e, sys)
+        
+    
+    def start_model_training(self, data_transformation_artifact: DataTransformationArtifact) -> ModelTrainigArtifact:
 
+        try:
+            model_training = ModelTrainer(data_transformation_artifact,
+                                          model_trainer_config=self.model_training_config)
+            model_training_artifact = model_training.initiate_model_triaining()
+
+            return model_training_artifact
+        except Exception as e:
+            raise MyException(e, sys) from e
         
     def run_pipeline(self) -> None:
 
@@ -73,6 +89,7 @@ class TrainPipeline:
             data_ingestion_artifact = self.start_data_ingestion()
             data_validation_artifact = self.start_data_validation(data_ingestion_artifact=data_ingestion_artifact)
             data_transformation_artifact = self.start_data_transformation(data_ingestion_artifact, data_validation_artifact)
+            model_training_artifact = self.start_model_training(data_transformation_artifact)
         except Exception as e:
             raise MyException(e, sys)
         

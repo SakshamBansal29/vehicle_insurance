@@ -13,9 +13,20 @@ class DataValidationArtifact:
 
 @dataclass
 class DataTransformationArtifact:
-    tranformed_data_file_path: str
+    transformed_object_file_path: str
     tranformed_train_data_file_path: str
     tranformed_test_data_file_path: str
+
+@dataclass
+class ClassificationArtifact:
+    f1_score: float
+    precision_score: float
+    recall_score: float
+
+@dataclass 
+class ModelTrainigArtifact:
+    train_model_file_path: str
+    metric_artifact: ClassificationArtifact
 
 
     
