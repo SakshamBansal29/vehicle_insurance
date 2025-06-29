@@ -73,8 +73,6 @@ class ModelTrainer:
                 metric_artifact=metric_artifact
             )
 
-
-
             logging.info(f"Model trainer artifact: {model_trainer_artifact}")
             return model_trainer_artifact
         except Exception as e:
